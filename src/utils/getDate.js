@@ -29,3 +29,18 @@ export const addDays = (date, days) => {
   let dayName = result.toLocaleString("en-us", { weekday: "long" });
   return { dateString: result.toLocaleString("en-GB"), weekday: dayName };
 };
+
+export const isDateInFuture = (date) => {
+  const [day, month, year] = date.split("/");
+  const fd = `${year}-${month}-${day}`;
+  // console.log(
+  //   date.split("-"),
+  //   fd,
+  //   day,
+  //   month,
+  //   year,
+  //   new Date(),
+  //   new Date(`${year}-${month}-${day}`)
+  // );
+  return new Date(`${year}-${month}-${day}`) > new Date();
+};

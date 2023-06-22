@@ -17,10 +17,10 @@ import { Modal } from "flowbite";
 import ModalLayout from "./Layout/Modal";
 import HabitsList from "./pages/HabitsList";
 
-const $targetEl = document.getElementById("small-modal");
+export const $targetEl = document.getElementById("small-modal");
 
 // options with default values
-const options = {
+export const options = {
   placement: "bottom-right",
   backdrop: "dynamic",
   backdropClasses:
@@ -46,12 +46,23 @@ function App() {
   const [editModalId, setEditModalId] = useState("");
   const [today, settoday] = useState(getDate());
   const count = useSelector((state) => state.counter.value);
-  const { habits } = useSelector((state) => state.habits);
+  const habits = useSelector((state) => state.habits.habits);
   const dispatch = useDispatch();
   useEffect(() => {
+    // (() => {
+    // if (habits.length > 0) {
+    //   const progress = habits[0]?.week.filter((item) => item.status == "done");
+
+    //   sethabitProgress(progress.length);
+    //   console.log("progress", progress);
+    //   console.log("progress", habits.week);
+    // }
+
+    // })();
+
     console.log($targetEl);
     // if ($targetEl) setModal(ModalObj);
-  }, []);
+  }, [habits.length]);
 
   // set the modal menu element
   // const $targetEl = document.getElementById("small-modal");
@@ -103,7 +114,7 @@ function App() {
 
   useEffect(() => {
     console.log(habits);
-  }, [habits, dispatch, editModalId]);
+  }, []);
 
   const handleHabitSUbmit = () => {
     console.log("hhh", habit);

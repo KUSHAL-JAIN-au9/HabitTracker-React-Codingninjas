@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  refresh: false,
   habits: [],
 };
 
@@ -8,6 +9,13 @@ export const habitSlice = createSlice({
   name: "habits",
   initialState,
   reducers: {
+    refreshHabit: (state, action) => {
+      // Redux Toolkit allows us to write "mutating" logic in reducers. It
+      // doesn't actually mutate the state because it uses the Immer library,
+      // which detects changes to a "draft state" and produces a brand new
+      // immutable state based off those changes
+      state.refresh = !state.refresh;
+    },
     addHabit: (state, action) => {
       // Redux Toolkit allows us to write "mutating" logic in reducers. It
       // doesn't actually mutate the state because it uses the Immer library,
@@ -16,12 +24,16 @@ export const habitSlice = createSlice({
       state.habits.push(action.payload);
     },
     removeHabit: (state, action) => {
-      const filterdstate = state.habits.filter((item) => {
-        console.log(item.id, action.payload);
-        return item.id !== action.payload;
-      });
-      console.log(filterdstate, action.payload, state.habits.length);
-      //   return (state.habits = [...filterdstate]);
+      // const filterdstate = state.habits.filter((item) => {
+      //   console.log(item.id, action.payload);
+      //   return item.id !== action.payload;
+      // });
+      state.habits.splice(
+        state.habits.findIndex((arrow) => arrow?.id === action.payload),
+        1
+      );
+      // console.log(filterdstate, action.payload, state.habits.length);
+      // return state.habits;
     },
     editHabit: (state, action) => {
       //   const filterdstate = state.filter((item) => item.id != action.payload.id);
@@ -32,7 +44,10 @@ export const habitSlice = createSlice({
       //   });
 
       const indexOfState = state.habits
-        .map((x) => x.id)
+        .map((x) => {
+          console.log("x", x);
+          return x.id;
+        })
         .indexOf(action.payload.id);
 
       console.log(indexOfState, state.habits, action.payload);
@@ -44,6 +59,7 @@ export const habitSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { addHabit, removeHabit, editHabit } = habitSlice.actions;
+export const { addHabit, removeHabit, editHabit, refreshHabit } =
+  habitSlice.actions;
 
 export default habitSlice.reducer;
