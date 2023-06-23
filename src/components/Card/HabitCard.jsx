@@ -28,10 +28,30 @@ const HabitCard = ({ habit, setEditModalId, type, allHabits }) => {
   const handleChangeStatus = (status, week) => {
     console.log(status, week, habit);
     console.log(allHabits);
-    const changedWeek = allHabits.week.filter((item) => item.week == week);
+
+    let changedWeek = allHabits.week.filter((item) => item.week == week);
+
+    console.log(changedWeek);
+    // Object.defineProperties(changedWeek[0], {
+    //   status: {
+    //     value: status,
+    //     writable: true, // 👈️ set property to writable
+    //     configurable: true,
+    //     enumerable: true,
+    //   },
+    // });
+
+    Object.defineProperty(changedWeek[0], "status", {
+      value: status,
+      configurable: true,
+      writable: true,
+      enumerable: true,
+    });
+    let descriptor = Object.getOwnPropertyDescriptor(changedWeek[0], "status");
+    console.log("descriptor", descriptor);
     // changedWeek[0].status = status;
-    const returnedTarget = Object.assign(changedWeek[0], { status });
-    console.log(returnedTarget);
+    // const returnedTarget = Object.assign(changedWeek[0], { status });
+    // console.log(returnedTarget);
     const payload = {
       id: allHabits.id,
       name: allHabits.name,
@@ -47,7 +67,7 @@ const HabitCard = ({ habit, setEditModalId, type, allHabits }) => {
   return (
     <div
       className={
-        "w-1/6 h-70 max-w-sm my-10 mx-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700  " +
+        "w-1/6  max-w-sm my-10 mx-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700  " +
         (isDateInFuture(habit?.date.split(",")[0]) && `grayscale`)
       }
     >
@@ -78,7 +98,7 @@ const HabitCard = ({ habit, setEditModalId, type, allHabits }) => {
             status:{habit?.status}
           </span>
         )}
-        <div className="flex mt-4 space-x-3 md:mt-6">
+        <div className="flex mt-4 space-x-3">
           {/* <a
             href="#"
             className="inline-flex items-center px-6 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -123,14 +143,14 @@ const HabitCard = ({ habit, setEditModalId, type, allHabits }) => {
               Delete
             </button>
           ) : (
-            <div className="flex flex-col justify-around items-end mt-4 space-x-3 md:mt-6">
+            <div className="flex flex-col justify-around items-end  space-x-3 ">
               {(habit?.status == "not done" || habit?.status == "none") && (
                 <button
                   type="button"
                   class={
                     isDateInFuture(habit?.date.split(",")[0])
                       ? "btn-disabled-card"
-                      : "text-gray-900 inline w-40 cursor-pointer hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 "
+                      : "text-gray-900 inline w-40  cursor-pointer hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 "
                   }
                   disabled={isDateInFuture(habit?.date.split(",")[0])}
                   onClick={() => handleChangeStatus("done", habit?.week)}

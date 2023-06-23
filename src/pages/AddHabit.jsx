@@ -7,7 +7,7 @@ const AddHabit = () => {
 
   console.log(state);
   return (
-    <div className="w-full h-auto min-h-screen gap-y-20   bg-lime-950 flex flex-row flex-wrap justify-start items-center ">
+    <div className="w-full h-70 min-h-screen gap-y-20   bg-lime-950 flex flex-row flex-wrap justify-start items-center ">
       {state.week.map((item) => {
         return (
           <HabitCard
