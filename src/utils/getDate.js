@@ -1,4 +1,4 @@
-import React from "react";
+
 
 export const getDate = () => {
   const today = new Date();
@@ -30,17 +30,10 @@ export const addDays = (date, days) => {
   return { dateString: result.toLocaleString("en-GB"), weekday: dayName };
 };
 
+
+//function to check weather the date is future date of today
 export const isDateInFuture = (date) => {
   const [day, month, year] = date.split("/");
   const fd = `${year}-${month}-${day}`;
-  // console.log(
-  //   date.split("-"),
-  //   fd,
-  //   day,
-  //   month,
-  //   year,
-  //   new Date(),
-  //   new Date(`${year}-${month}-${day}`)
-  // );
   return new Date(`${year}-${month}-${day}`) > new Date();
 };

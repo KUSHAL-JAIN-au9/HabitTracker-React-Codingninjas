@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Calendar from "../../icons/Calendar.png";
 import WeekView from "../../icons/planning.png";
-import Button from "../button/button";
 import { Link, useNavigate } from "react-router-dom";
 import { editHabit, refreshHabit, removeHabit } from "../../redux/habits";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,9 +8,10 @@ import { modal } from "../../App";
 import { getDate, isDateInFuture } from "../../utils/getDate";
 
 const HabitCard = ({ habit, setEditModalId, type, allHabits }) => {
-  const [today, settoday] = useState("");
+  const [today, settoday] = useState({});
+  let count = 0;
 
-  const { refresh } = useSelector((state) => state.habits);
+  const { refresh, habits } = useSelector((state) => state.habits);
   const history = useNavigate();
   const dispatch = useDispatch();
   console.log("refresh", refresh);
@@ -22,52 +22,85 @@ const HabitCard = ({ habit, setEditModalId, type, allHabits }) => {
     //   console.log(isDateInFuture(habit?.date.split(",")[0]));
     //   settoday(today);
     // })();
+    getHabit();
     console.log("hii", refresh);
   }, [refresh]);
 
-  const handleChangeStatus = (status, week) => {
+  const getHabit = () => {
+    const objHabit = habits.filter((obj) => obj.id === allHabits.id);
+    const objHabitWeek = objHabit[0].week.filter((obj) => obj.id === habit.id);
+    console.log(objHabit, habits, allHabits);
+    console.log(habit, objHabitWeek);
+    settoday(objHabitWeek[0]);
+  };
+
+  const handleChangeStatus = (status, week, e) => {
+    // e.preventDefault();
+    // if (count >= 1)
+    //   alert(
+    //     "u can only change status one time try going back home and click habit to change status"
+    //   );
+    // count++;
     console.log(status, week, habit);
-    console.log(allHabits);
+    console.log(allHabits, e);
 
     let changedWeek = allHabits.week.filter((item) => item.week == week);
+    const myObject = { ...changedWeek[0], status: status };
+    const i = allHabits.week.findIndex((x) => x.week === week);
+    console.log("week filter", i, changedWeek[0]);
+    console.log("index is", i, myObject);
 
-    console.log(changedWeek);
-    // Object.defineProperties(changedWeek[0], {
-    //   status: {
-    //     value: status,
-    //     writable: true, // 👈️ set property to writable
-    //     configurable: true,
-    //     enumerable: true,
-    //   },
-    // });
-
-    Object.defineProperty(changedWeek[0], "status", {
-      value: status,
-      configurable: true,
-      writable: true,
-      enumerable: true,
+    const updatedArray = allHabits.week.map((obj) => {
+      console.log(obj);
+      if (obj.week === week) {
+        return myObject;
+      }
+      // Otherwise, return the original object
+      return obj;
     });
-    let descriptor = Object.getOwnPropertyDescriptor(changedWeek[0], "status");
-    console.log("descriptor", descriptor);
+
+    // allHabits.week.splice(i, 1, myObject);
+    console.log(allHabits?.week, updatedArray);
+
+    // allHabits.week[i].status = status;
+
+    // Object.defineProperty(allHabits.week[i], "status", {
+    //   value: status,
+    //   configurable: true,
+    //   writable: true,
+    //   enumerable: true,
+    // });
+    // let descriptor = Object.getOwnPropertyDescriptor(changedWeek[0], "status");
+    // console.log("descriptor", descriptor);
     // changedWeek[0].status = status;
     // const returnedTarget = Object.assign(changedWeek[0], { status });
     // console.log(returnedTarget);
+
+    // const payload = {
+    //   id: allHabits.id,
+    //   name: allHabits.name,
+    //   week: [...updatedArray],
+    // };
+
     const payload = {
-      id: allHabits.id,
-      name: allHabits.name,
-      week: [...allHabits.week],
+      id: updatedArray[i].id,
+      date: updatedArray[i].date,
+      week: updatedArray[i].week,
+      status,
+      Habit_id: allHabits.id,
     };
-    console.log(changedWeek, payload);
+
+    console.log(payload);
     dispatch(editHabit(payload));
     dispatch(refreshHabit());
     // history("/");
   };
 
-  console.log("habit single", habit);
+  console.log("habit single", habit, today);
   return (
     <div
       className={
-        "w-1/6  max-w-sm my-10 mx-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700  " +
+        "w-1/6 h-96 items-stretch max-w-sm my-10 mx-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700  " +
         (isDateInFuture(habit?.date.split(",")[0]) && `grayscale`)
       }
     >
@@ -76,8 +109,6 @@ const HabitCard = ({ habit, setEditModalId, type, allHabits }) => {
           className="w-20 h-20  shadow-lg mb-5"
           src={type !== "week" ? Calendar : WeekView}
           alt="Bonnie image"
-          // width={20}
-          // height={20}
         />
         {type !== "week" ? (
           <Link to={"/add"} state={habit}>
@@ -86,7 +117,7 @@ const HabitCard = ({ habit, setEditModalId, type, allHabits }) => {
             </h5>
           </Link>
         ) : (
-          <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
+          <h5 className="mb-2 text-xl font-medium text-gray-900 dark:text-white">
             {habit?.week}
           </h5>
         )}
@@ -94,17 +125,27 @@ const HabitCard = ({ habit, setEditModalId, type, allHabits }) => {
           {type !== "week" ? habit?.name : habit?.date.split(",")[0]}
         </span>
         {type == "week" && (
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            status:{habit?.status}
+          <span
+            class={
+              today?.status == "done"
+                ? "habit-status-done-icon"
+                : "habit-status-notdone-icon"
+            }
+          >
+            <span
+              class={
+                today?.status == "done"
+                  ? "habit-status-done"
+                  : "habit-status-notdone"
+              }
+            ></span>
+            status: {today?.status}
           </span>
+          // <span className="text-sm text-gray-500 dark:text-gray-400">
+          //   status:{today?.status}
+          // </span>
         )}
         <div className="flex mt-4 space-x-3">
-          {/* <a
-            href="#"
-            className="inline-flex items-center px-6 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            Edit
-          </a> */}
           {type !== "week" ? (
             // <button
             //   type="button"
@@ -144,7 +185,7 @@ const HabitCard = ({ habit, setEditModalId, type, allHabits }) => {
             </button>
           ) : (
             <div className="flex flex-col justify-around items-end  space-x-3 ">
-              {(habit?.status == "not done" || habit?.status == "none") && (
+              {(today?.status == "not done" || today?.status == "none") && (
                 <button
                   type="button"
                   class={
@@ -153,7 +194,7 @@ const HabitCard = ({ habit, setEditModalId, type, allHabits }) => {
                       : "text-gray-900 inline w-40  cursor-pointer hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 "
                   }
                   disabled={isDateInFuture(habit?.date.split(",")[0])}
-                  onClick={() => handleChangeStatus("done", habit?.week)}
+                  onClick={(e) => handleChangeStatus("done", habit?.week, e)}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -189,7 +230,7 @@ const HabitCard = ({ habit, setEditModalId, type, allHabits }) => {
                 <span className="inline">not done</span>
               </button> */}
 
-              {(habit?.status == "done" || habit?.status == "none") && (
+              {(today?.status == "done" || today?.status == "none") && (
                 <button
                   type="button"
                   class={
@@ -198,7 +239,9 @@ const HabitCard = ({ habit, setEditModalId, type, allHabits }) => {
                       : "text-gray-900 inline w-40 cursor-pointer hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 "
                   }
                   disabled={isDateInFuture(habit?.date.split(",")[0])}
-                  onClick={() => handleChangeStatus("not done", habit?.week)}
+                  onClick={(e) =>
+                    handleChangeStatus("not done", habit?.week, e)
+                  }
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

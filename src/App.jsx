@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import Input from "./components/Input/input";
-import Button from "./components/button/button";
 import Form from "./components/form/form";
 import { useDispatch, useSelector } from "react-redux";
 import { addHabit, editHabit, removeHabit } from "./redux/habits";
 import { addDays, getDate } from "./utils/getDate";
 import Navbar from "./components/Navbar/Navbar";
 import { Route, Routes } from "react-router-dom";
-import AddHabit from "./pages/AddHabit";
+import AddHabit from "./pages/HabitWeekPage";
 import { Modal } from "flowbite";
 import ModalLayout from "./Layout/Modal";
 import HabitsList from "./pages/HabitsList";
@@ -108,10 +107,7 @@ function App() {
     setHabit(e.target.value);
   };
 
-  console.log("h", habits);
-  console.log("date", today);
-  console.log("week", weekLog);
-  console.log("setEditModalId", editModalId);
+
   return (
     <>
       <Navbar modal={modal} />

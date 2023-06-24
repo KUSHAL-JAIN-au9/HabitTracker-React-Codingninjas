@@ -8,27 +8,33 @@ import { useDispatch, useSelector } from "react-redux";
 import { refreshHabit, removeHabit } from "../redux/habits";
 
 const HabitsList = ({ habits, setEditModalId }) => {
-  const [habitProgress, sethabitProgress] = useState(0);
+  const [habitProgress, sethabitProgress] = useState([]);
   const dispatch = useDispatch();
 
   const habitState = useSelector((state) => state.habits);
-  console.log(habitState.refresh, habitState.habits);
+  console.log(habitState.refresh);
   useEffect(() => {
-    console.log(habitState.refresh);
     if (habits.length > 0) {
-      const progress = habits[0]?.week.filter((item) => item.status == "done");
-
-      sethabitProgress(progress?.length);
-      console.log("progress", progress);
-      console.log("progress", habits.week);
+      habitState.habits.map((item, index) => {
+        const progress = item.week.filter((item) => item.status == "done");
+        console.log(progress.length, item);
+        habitProgress.push(progress.length);
+        // sethabitProgress((prev) => [progress.length, ...prev]);
+      });
     }
+  }, []);
+
+  useEffect(() => {
+    // console.log(habitState.refresh);
+    // console.log("app", habitState.habits);
   }, [habitState.refresh]);
 
   console.log("habits all", habits || "no habits");
+  console.log("progress", habitProgress);
   const modal = new Modal($targetEl, options);
   return (
-    <div className="w-full h-auto min-h-screen gap-y-20   bg-lime-950 flex flex-row flex-wrap justify-start items-center ">
-      {habits?.map((habit) => (
+    <div className="w-full h-auto min-h-screen gap-y-20   bg-lime-950 flex flex-row flex-wrap justify-start items-start ">
+      {habitState.habits?.map((habit, index) => (
         // <HabitCard
         //   habit={habit}
         //   key={habit?.id}
@@ -49,37 +55,13 @@ const HabitsList = ({ habits, setEditModalId }) => {
             </Link>
             <span className="text-sm text-gray-500 dark:text-gray-400">
               {"weekly progress : " +
-                (habitProgress || 0) +
+                (habitState.habits[index]?.week.filter(
+                  (item) => item.status == "done"
+                ).length || 0) +
                 "/" +
-                (habits[0]?.week?.length || 0)}
+                (habits[index]?.week?.length || 0)}
             </span>
             <div className="flex mt-4 space-x-3 md:mt-6">
-              {/* <button
-                type="button"
-                data-modal-target="small-modal"
-                data-modal-toggle="small-modal"
-                onClick={() => {
-                  console.log(habit);
-                  console.log(modal);
-                  setEditModalId(habit?.name);
-                  modal?.toggle();
-                }}
-                class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
-              >
-                Edit
-              </button> */}
-              {/* <button
-                type="button"
-                data-modal-target="small-modal"
-                data-modal-toggle="small-modal"
-                onClick={() => {
-                  console.log(modal);
-                  modal?.toggle();
-                }}
-                className="text-white bg-gradient-to-r inline from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm  text-center mr-2 mb-2 px-6 py-3.5"
-              >
-                hiii
-              </button> */}
               <button
                 type="button"
                 class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
@@ -97,18 +79,6 @@ const HabitsList = ({ habits, setEditModalId }) => {
           </div>
         </div>
       ))}
-      {/* <button
-        type="button"
-        data-modal-target="small-modal"
-        data-modal-toggle="small-modal"
-        onClick={() => {
-          console.log(modal);
-          modal?.toggle();
-        }}
-        className="text-white bg-gradient-to-r inline from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm  text-center mr-2 mb-2 px-6 py-3.5"
-      >
-        hiii
-      </button> */}
     </div>
   );
 };

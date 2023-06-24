@@ -2,12 +2,12 @@ import React from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import HabitCard from "../components/Card/HabitCard";
 
-const AddHabit = () => {
+const HabitWeekPage = () => {
   const { state } = useLocation();
 
   console.log(state);
   return (
-    <div className="w-full h-70 min-h-screen gap-y-20   bg-lime-950 flex flex-row flex-wrap justify-start items-center ">
+    <div className="w-full min-h-screen gap-y-20   bg-lime-950 flex flex-row flex-wrap justify-start items-center ">
       {state.week.map((item) => {
         return (
           <HabitCard
@@ -23,4 +23,4 @@ const AddHabit = () => {
   );
 };
 
-export default AddHabit;
+export default HabitWeekPage;
