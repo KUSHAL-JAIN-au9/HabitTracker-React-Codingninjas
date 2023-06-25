@@ -10,7 +10,7 @@ To get started with the project, follow the steps below:
 
 1. Clone the repository to your local machine using the following command:
    ```
-   git clone <repository_url>
+   git clone https://github.com/KUSHAL-JAIN-au9/HabitTracker-React-Codingninjas.git
    ```
 
 2. Navigate to the project directory:
